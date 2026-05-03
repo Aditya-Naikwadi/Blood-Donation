@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/v1/:path*",
+      "destination": "https://blood-auth-production.up.railway.app/api/v1/:path*"
+    },
+    {
+      "source": "/socket.io/:path*",
+      "destination": "https://blood-request-production.up.railway.app/socket.io/:path*"
+    }
+  ],
+  "framework": "nextjs",
+  "regions": ["sfo1"]
+}

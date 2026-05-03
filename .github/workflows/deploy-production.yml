@@ -1,0 +1,43 @@
+name: Production Deployment
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # 1. Deploy to Vercel (Web & Admin)
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./apps/web
+          vercel-args: '--prod'
+
+      # 2. Deploy to Railway (Auth & Request)
+      - name: Deploy to Railway
+        run: |
+          npm install -g @railway/cli
+          railway up --service auth-service --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      # 3. Run Database Migrations (Supabase)
+      - name: Prisma Migrate
+        run: |
+          cd services/auth-service
+          npm ci
+          npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+
+      # 4. Notify Slack/Discord
+      - name: Notify Success
+        if: success()
+        run: curl -X POST -H 'Content-type: application/json' --data '{"text":"Deployment to Production Successful!"}' ${{ secrets.DISCORD_WEBHOOK }}

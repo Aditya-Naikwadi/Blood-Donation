@@ -1,0 +1,66 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Build Auth Service
+      run: |
+        cd services/auth-service
+        npm install
+        npm run build
+
+    - name: Build Donor Service
+      run: |
+        cd services/donor-service
+        go build -v .
+
+    - name: Build Match Engine
+      run: |
+        cd services/match-engine
+        go build -v .
+
+  docker-build:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push Auth Service
+      uses: docker/build-push-action@v4
+      with:
+        context: ./services/auth-service
+        push: true
+        tags: user/blood-auth:latest
+
+    - name: Build and push Request Service
+      uses: docker/build-push-action@v4
+      with:
+        context: ./services/request-service
+        push: true
+        tags: user/blood-request:latest

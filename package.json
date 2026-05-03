@@ -1,0 +1,19 @@
+{
+  "name": "blood-donation-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "setup": "node infrastructure/setup.js"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.0"
+  }
+}

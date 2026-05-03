@@ -1,0 +1,19 @@
+{
+  "Index": {
+    "title": "Blood Donation Platform",
+    "heroTitle": "Every Drop Counts. Connect in Seconds.",
+    "heroSubtitle": "The world's fastest real-time blood donation matching platform.",
+    "donateNow": "Donate Now",
+    "requestBlood": "Request Blood"
+  },
+  "Auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email Address",
+    "password": "Password"
+  },
+  "Errors": {
+    "unauthorized": "You must be logged in to view this page.",
+    "notFound": "Page not found."
+  }
+}

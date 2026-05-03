@@ -1,0 +1,13 @@
+{
+  "mappings": {
+    "properties": {
+      "donorId": { "type": "keyword" },
+      "bloodType": { "type": "keyword" },
+      "location": { "type": "geo_point" },
+      "isAvailable": { "type": "boolean" },
+      "lastDonationDate": { "type": "date" },
+      "radius": { "type": "integer" },
+      "name": { "type": "text" }
+    }
+  }
+}

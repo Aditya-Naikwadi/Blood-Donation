@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # In production, we don't run DBs locally
+  postgres:
+    image: hello-world
+    entrypoint: ["echo", "Using Supabase in production"]
+    restart: "no"
+
+  mongodb:
+    image: hello-world
+    entrypoint: ["echo", "Using MongoDB Atlas in production"]
+    restart: "no"
+
+  redis:
+    image: hello-world
+    entrypoint: ["echo", "Using Upstash in production"]
+    restart: "no"
+
+  elasticsearch:
+    image: hello-world
+    entrypoint: ["echo", "Using Oracle Cloud ES in production"]
+    restart: "no"
+
+  kafka:
+    image: hello-world
+    entrypoint: ["echo", "Using Upstash Kafka in production"]
+    restart: "no"
+
+  # Production services use multi-stage builds
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    restart: always
+
+  donor-service:
+    build:
+      context: ./services/donor-service
+      dockerfile: Dockerfile
+    restart: always

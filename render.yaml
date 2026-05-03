@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: donor-service
+    env: go
+    buildCommand: go build -o main .
+    startCommand: ./main
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+
+  - type: web
+    name: match-engine
+    env: go
+    buildCommand: go build -o main .
+    startCommand: ./main
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ELASTICSEARCH_URL
+        sync: false
+      - key: KAFKA_BROKERS
+        sync: false

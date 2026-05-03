@@ -1,0 +1,94 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  DONOR
+  RECIPIENT
+  HOSPITAL
+  ADMIN
+}
+
+enum Urgency {
+  CRITICAL
+  HIGH
+  NORMAL
+}
+
+enum RequestStatus {
+  OPEN
+  MATCHED
+  FULFILLED
+  EXPIRED
+}
+
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  password          String
+  name              String
+  role              Role      @default(DONOR)
+  bloodType         String?
+  lastDonationDate  DateTime?
+  isAvailable       Boolean   @default(true)
+  locationLat       Float?
+  locationLng       Float?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relationships
+  donations         DonationHistory[]
+  requests          BloodRequest[]    @relation("UserRequests")
+  notifications     Notification[]
+}
+
+model BloodRequest {
+  id            String        @id @default(uuid())
+  patientName   String
+  bloodType     String
+  urgency       Urgency       @default(NORMAL)
+  locationLat   Float
+  locationLng   Float
+  status        RequestStatus @default(OPEN)
+  requesterId   String
+  requester     User          @relation("UserRequests", fields: [requesterId], references: [id])
+  createdAt     DateTime      @default(now())
+  expiresAt     DateTime
+}
+
+model DonationHistory {
+  id          String   @id @default(uuid())
+  donorId     String
+  donor       User     @relation(fields: [donorId], references: [id])
+  units       Int
+  donatedAt   DateTime @default(now())
+  hospitalName String
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Campaign {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  location    String
+  lat         Float
+  lng         Float
+  startDate   DateTime
+  endDate     DateTime
+  targetUnits Int
+  currentUnits Int     @default(0)
+}
