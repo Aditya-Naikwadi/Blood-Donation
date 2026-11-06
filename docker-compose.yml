@@ -49,7 +49,7 @@ services:
       retries: 5
 
   kafka:
-    image: bitnami/kafka:3.6.0
+    image: soldevelo/kafka:3.6.2
     container_name: blood_kafka
     environment:
       - KAFKA_ENABLE_KRAFT=yes
